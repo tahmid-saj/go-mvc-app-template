@@ -1,0 +1,1 @@
+# go-mvc-app-template

@@ -9,15 +9,15 @@ import (
 	"github.com/tahmidsaj/go-course/pkg/render"
 )
 
-// Repository var used by the handlers
+// Repo the repository used by the handlers
 var Repo *Repository
 
-// Repository type
+// Repository is the repository type
 type Repository struct {
 	App *config.AppConfig
 }
 
-// NewRepo creates the new repository
+// NewRepo creates a new repository
 func NewRepo(a *config.AppConfig) *Repository {
 	return &Repository{
 		App: a,
@@ -29,24 +29,24 @@ func NewHandlers(r *Repository) {
 	Repo = r
 }
 
-// Home is the home page handler
+// Home is the handler for the home page
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	// fmt.Fprint(w, "This is the home page")
+	remoteIP := r.RemoteAddr
+	m.App.Session.Put(r.Context(), "remote_ip", remoteIP)
 
 	render.RenderTemplate(w, "home.page.html", &models.TemplateData{})
 }
 
-// About is the about page handler
+// About is the handler for the about page
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
-	// sum := addValues(2, 2)
-	// _, _ = fmt.Fprint(w, fmt.Sprintf("This is the about page and 2 + 2 is %d", sum))
-
 	// perform some logic
 	stringMap := make(map[string]string)
 	stringMap["test"] = "Hello, again"
 
-	// send the data to the template
+	remoteIP := m.App.Session.GetString(r.Context(), "remote_ip")
+	stringMap["remote_ip"] = remoteIP
 
+	// send data to the template
 	render.RenderTemplate(w, "about.page.html", &models.TemplateData{
 		StringMap: stringMap,
 	})
